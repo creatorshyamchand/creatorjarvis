@@ -1,0 +1,40 @@
+Alright! I'm ready to generate some Python code for you. To give you the best and most relevant code, please tell me:
+
+*   **What do you want the code to do?** (e.g., "Create a simple calculator," "Fetch data from a website," "Sort a list of numbers," etc.) 🧮 🌐 🔢
+*   **Are there any specific requirements or constraints?** (e.g., "Must use a specific library," "Must be optimized for speed," "Should have good error handling," etc.) ⚙️ ⏱️ ⚠️
+*   **What is your experience level with Python?** (Beginner, intermediate, advanced) This will help me tailor the complexity of the code. 🧑‍💻
+
+In the meantime, here are a few general examples to get you started:
+
+**1. A simple "Hello, world!" program:**
+
+```python
+print("Hello, world! 👋")
+```
+
+**2. A function to add two numbers:**
+
+```python
+def add_numbers(x, y):
+  """This function adds two numbers and returns the sum."""
+  return x + y
+
+result = add_numbers(5, 3)
+print(f"The sum is: {result} ➕")
+```
+
+**3. A basic loop:**
+
+```python
+for i in range(5):
+  print(f"Iteration: {i} 🔄")
+```
+
+**4. Example of List Comprehension**
+```python
+numbers = [1, 2, 3, 4, 5]
+squared_numbers = [number**2 for number in numbers]
+print(squared_numbers)  # Output: [1, 4, 9, 16, 25]
+```
+
+I'm excited to help you write some Python code! Just give me a little more information about what you need. 🚀
