@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep-space: #0e0e0e;
+            --bg-interface: rgba(25, 25, 25, 0.92);
+            --primary-accent: #9cf0a1;
+            --secondary-accent: #a2a2a2;
+            --text-primary: #e6e6e6;
+            --text-secondary: #888;
+            --border-subtle: rgba(255, 255, 255, 0.04);
+            --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+            --gradient-user: linear-gradient(145deg, #88b888, #446644);
+            --gradient-button: linear-gradient(to right, #777, #333);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: var(--bg-deep-space);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/asfalt-light.png');
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .arc-container {
+            width: 450px;
+            height: 676px;
+            background-color: var(--bg-interface);
+            border-radius: 30px;
+            box-shadow: var(--shadow-soft), 0 0 0 1px var(--border-subtle);
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            border: 1px solid var(--border-subtle);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .arc-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 3px);
+            pointer-events: none;
+            z-index: 3;
+            mix-blend-mode: overlay;
+        }
+
+        .arc-header {
+            padding: 1.25rem 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(10, 10, 10, 0.5);
+            flex-shrink: 0;
+            z-index: 2;
+        }
+
+        .title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            font-size: 1.75rem;
+            color: var(--primary-accent);
+        }
+
+        .title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-shadow: 0 0 5px var(--primary-accent);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-accent);
+            border-radius: 50%;
+        }
+
+        .conversation-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            scrollbar-width: thin;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 0.8rem 1.3rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: var(--gradient-user);
+            color: #fff;
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background: rgba(43, 52, 69, 0.7);
+            color: var(--text-primary);
+        }
+
+        .initial-prompt {
+            align-self: center;
+            background-color: rgba(156, 240, 161, 0.1);
+            color: var(--primary-accent);
+            padding: 0.6rem 1.2rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(156, 240, 161, 0.3);
+        }
+
+        .mic-button-container {
+            padding: 1rem 1.5rem 1.5rem;
+            flex-shrink: 0;
+            z-index: 2;
+            background: rgba(10, 10, 10, 0.5);
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .mic-button {
+            width: 100%;
+            height: 60px;
+            background: var(--gradient-button);
+            color: var(--text-primary);
+            border: 1px solid #666;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: inset 0 0 6px rgba(0, 255, 0, 0.2);
+        }
+
+        .mic-button:hover:not(:disabled) {
+            background: #444;
+        }
+
+        .mic-button:disabled {
+            background: #333;
+            color: #999;
+        }
+
+        @media (max-width: 500px) {
+            .arc-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                transform: none;
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+            }
+
+            .mic-button-container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="arc-container">
+        <div class="arc-header">
+            <div class="title-group">
+                <i class="fas fa-terminal logo-icon"></i>
+                <h1 class="title">JARVIS AI</h1>
+            </div>
+            <div class="status-indicator">
+                <span class="status-text">LINK ONLINE</span>
+                <div class="status-dot"></div>
+            </div>
+        </div>
+
+        <div id="conversation-area" class="conversation-area">
+            <div class="initial-prompt">
+                Press mic to initiate...
+            </div>
+        </div>
+
+        <div class="mic-button-container">
+            <button id="mic-button" class="mic-button">
+                <i id="mic-icon" class="fas fa-microphone icon"></i>
+                <span id="mic-text">Activate JARVIS</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="/eel.js"></script>
+    <script>
+        const conversationArea = document.getElementById('conversation-area');
+        const micButton = document.getElementById('mic-button');
+        const micIcon = document.getElementById('mic-icon');
+        const micText = document.getElementById('mic-text');
+        const initialPromptDiv = document.querySelector('.initial-prompt');
+        let typingIndicatorElement = null;
+
+        let isListening = false;
+        let isProcessing = false;
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                isListening = true;
+                isProcessing = false; // Reset processing flag
+                micButton.classList.add('listening');
+                micIcon.classList.remove('fa-microphone', 'fa-spinner', 'fa-spin');
+                micIcon.classList.add('fa-stop-circle');
+                micText.textContent = 'Listening...';
+                if (initialPromptDiv) initialPromptDiv.style.display = 'none';
+            };
+
+            recognition.onresult = async (event) => {
+                stopListeningUI(); // Stop listening UI state immediately
+                isProcessing = true; // Set processing state
+                const userQuery = event.results[0][0].transcript;
+                addMessageToUI(userQuery, true);
+
+                showTypingIndicator();
+                updateMicButtonState('processing');
+
+                try {
+                    const result = await eel.process_user_query(userQuery)();
+                    removeTypingIndicator();
+
+                    if (result && result.response) {
+                        const aiResponseText = result.response;
+                        addMessageToUI(aiResponseText, false);
+
+                        if (result.should_speak === true) {
+                            // Check for common error phrases before speaking
+                            const errorPhrases = ["error", "apologize", "couldn't formulate", "issue processing", "neural network connection interrupted"];
+                            const shouldSkipSpeak = errorPhrases.some(phrase => aiResponseText.toLowerCase().includes(phrase));
+
+                            if (!shouldSkipSpeak) {
+                                eel.request_tts(aiResponseText)();
+                            } else {
+                                console.log("Skipping TTS for error/apology message:", aiResponseText);
+                            }
+                        }
+                    } else {
+                        addMessageToUI("JARVIS returned an unexpected response.", false);
+                    }
+                } catch (error) {
+                    console.error("Error calling Python via Eel:", error);
+                    removeTypingIndicator();
+                    addMessageToUI('Neural network connection interrupted. Please try again.', false);
+                } finally {
+                    isProcessing = false;
+                    updateMicButtonState('idle');
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                let errorMessage = 'Speech input error. Try again.';
+                if (event.error === 'no-speech') errorMessage = 'No speech detected.';
+                else if (event.error === 'audio-capture') errorMessage = 'Microphone error.';
+                else if (event.error === 'not-allowed') errorMessage = 'Microphone access denied.';
+
+                removeTypingIndicator(); // Ensure typing indicator is removed on error
+                addMessageToUI(errorMessage, false);
+                isProcessing = false; // Reset processing flag
+                stopListeningUI(); // Also reset listening state
+                updateMicButtonState('idle');
+            };
+
+            recognition.onend = () => {
+                // This onend can be triggered by recognition.stop() or naturally.
+                // If it's not already processing a result, reset the UI.
+                if (!isProcessing) {
+                    stopListeningUI();
+                    updateMicButtonState('idle');
+                }
+            };
+
+            micButton.addEventListener('click', () => {
+                if (isProcessing) return;
+
+                if (!isListening) {
+                    try {
+                        recognition.start();
+                    } catch (e) {
+                        console.error("Error starting recognition:", e);
+                        addMessageToUI("Could not start listening. Mic issue?", false);
+                        updateMicButtonState('idle');
+                    }
+                } else {
+                    recognition.stop(); // This will trigger onend
+                }
+            });
+
+        } else {
+            // Fallback for browsers without SpeechRecognition
+            addMessageToUI("Your browser doesn't support speech recognition. Try Chrome or Edge.", false);
+            if (initialPromptDiv) initialPromptDiv.style.display = 'none';
+            micButton.disabled = true;
+            micText.textContent = 'Not Supported';
+            micIcon.classList.remove('fa-microphone');
+            micIcon.classList.add('fa-times-circle');
+        }
+
+        function stopListeningUI() {
+            isListening = false;
+            micButton.classList.remove('listening');
+        }
+
+        function updateMicButtonState(state) {
+            micButton.classList.remove('listening'); // General reset
+            switch (state) {
+                case 'listening':
+                    isListening = true; isProcessing = false;
+                    micButton.classList.add('listening');
+                    micIcon.className = 'fas fa-stop-circle icon';
+                    micText.textContent = 'Listening...';
+                    break;
+                case 'processing':
+                    isListening = false; isProcessing = true;
+                    micIcon.className = 'fas fa-spinner fa-spin icon';
+                    micText.textContent = 'JARVIS Processing...';
+                    break;
+                case 'idle':
+                default:
+                    isListening = false; isProcessing = false;
+                    micIcon.className = 'fas fa-microphone icon';
+                    micText.textContent = 'Activate JARVIS';
+                    break;
+            }
+        }
+
+
+        function addMessageToUI(text, isUser = true, isTyping = false) {
+            if (initialPromptDiv && initialPromptDiv.style.display !== 'none') {
+                initialPromptDiv.style.display = 'none';
+            }
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            if (isTyping) {
+                messageElement.classList.add('ai-typing');
+                messageElement.id = 'ai-typing-indicator';
+                messageElement.innerHTML = `
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>`;
+                typingIndicatorElement = messageElement;
+            } else {
+                messageElement.classList.add(isUser ? 'user-message' : 'ai-message');
+                messageElement.textContent = text;
+            }
+
+            conversationArea.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            if (!typingIndicatorElement) { // Add only if not already present
+                addMessageToUI('', false, true);
+            }
+        }
+        function removeTypingIndicator() {
+            if (typingIndicatorElement) {
+                typingIndicatorElement.remove();
+                typingIndicatorElement = null;
+            }
+        }
+
+        function scrollToBottom() {
+            // A short delay helps ensure the element is fully rendered and height calculated
+            setTimeout(() => {
+                conversationArea.scrollTop = conversationArea.scrollHeight;
+            }, 50);
+        }
+
+        // Initial state update
+        updateMicButtonState('idle');
+
+    </script>
+</body>
+
+</html>
